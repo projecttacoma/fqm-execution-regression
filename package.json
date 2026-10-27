@@ -1,0 +1,36 @@
+{
+  "name": "fqm-execution-regression",
+  "version": "1.0.0",
+  "description": "Regression test runner for fqm-execution.",
+  "homepage": "https://github.com/projecttacoma/fqm-execution-regression#readme",
+  "bugs": {
+    "url": "https://github.com/projecttacoma/fqm-execution-regression/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/projecttacoma/fqm-execution-regression.git"
+  },
+  "license": "ISC",
+  "contributors": [
+    {
+      "name": "Chris Hossenlopp",
+      "email": "hossenlopp@mitre.org"
+    }
+  ],
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "lodash": "^4.18.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^7.0.2",
+    "@types/fhir": "0.0.34"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.17.26",
+    "@types/node": "^26.6.5"
+  }
+}
