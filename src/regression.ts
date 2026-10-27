@@ -93,16 +93,19 @@ async function main() {
       allDirs.push({ shortName: path.basename(singleMeasureDirPath), fullPath: path.resolve(singleMeasureDirPath)});
     }
   } else {
-    // find all of the measure directories
+    // find all of the measure directories, start with the container dirs
     const measureDirBasePaths = fs.readdirSync(INPUT_BASE_PATH, { withFileTypes: true })
       .filter(f => f.isDirectory())
       .map(f => path.join(INPUT_BASE_PATH, f.name));
 
+    // look for all the directories under it
     allDirs = measureDirBasePaths
       .map(d =>
-        fs.readdirSync(d).map(f => ({
-          shortName: f,
-          fullPath: path.join(d, f)
+        fs.readdirSync(d, {withFileTypes: true})
+          .filter(f => f.isDirectory())
+          .map(f => ({
+          shortName: f.name,
+          fullPath: path.join(d, f.name)
         }))
       )
       .flat();
