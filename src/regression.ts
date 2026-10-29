@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { Calculator } from '../../fqm-execution/build/index.js';
+import { Calculator, type CalculationOptions } from '../../fqm-execution/build/index.js';
 
 const regressionBaseName = process.argv[2] ?? 'regression-output';
 const verbose = process.argv[3] === 'true';
@@ -57,7 +57,18 @@ async function calculateRegression(
     const testResultsPath = path.join(regressionResultsPath, `results-${tfp.replace('/', '-')}`);
 
     try {
-      const { results } = await Calculator.calculate(measureBundle, [patientBundle], {});
+      const measure: fhir4.Measure = measureBundle.entry?.find(e => e.resource?.resourceType === 'Measure')?.resource as fhir4.Measure;
+      const options: CalculationOptions = {};
+      // create the measurement period with full precision.
+      if (measure.effectivePeriod?.start && measure.effectivePeriod?.end) {
+        const startDate = new Date(measure.effectivePeriod.start);
+        startDate.setUTCHours(0, 0, 0, 0);
+        options.measurementPeriodStart = startDate.toISOString();
+        const endDate = new Date(measure.effectivePeriod.end);
+        endDate.setUTCHours(23, 59, 59, 999);
+        options.measurementPeriodEnd = endDate.toISOString();
+      }
+      const { results } = await Calculator.calculate(measureBundle, [patientBundle], options);
 
       fs.writeFileSync(testResultsPath, JSON.stringify(results, undefined, verbose ? 2 : undefined), 'utf8');
       console.log(`${FG_GREEN}%s${RESET}: Results written to ${testResultsPath}`, 'SUCCESS');
