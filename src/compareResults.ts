@@ -19,11 +19,19 @@ console.log(`Comparing ${beforeDir} and ${afterDir}`);
 let fileCount = 0;
 let diffCount = 0;
 
-if (fs.existsSync(path.join('output', 'compare-output'))) {
-  fs.rmSync(path.join('output', 'compare-output'), { recursive: true });
+const beforeTimestamp = path.basename(beforeDir).match(/-(\d+)$/)?.[1];
+const afterTimestamp = path.basename(afterDir).match(/-(\d+)$/)?.[1];
+if (!beforeTimestamp || !afterTimestamp) {
+  throw new Error('Input directory names must end with a timestamp');
 }
-fs.mkdirSync(path.join('output', 'compare-output', 'before'), { recursive: true });
-fs.mkdirSync(path.join('output', 'compare-output', 'after'), { recursive: true });
+const timestampSuffix = [...new Set([beforeTimestamp, afterTimestamp])].join('-');
+const compareOutputDir = path.join('output', `compare-output-${timestampSuffix}`);
+const beforeName = path.basename(beforeDir).replace(/-\d+$/, '');
+const afterName = path.basename(afterDir).replace(/-\d+$/, '');
+const beforeOutputDir = path.join(compareOutputDir, beforeName === afterName ? `${beforeName}-${beforeTimestamp}` : beforeName);
+const afterOutputDir = path.join(compareOutputDir, beforeName === afterName ? `${afterName}-${afterTimestamp}` : afterName);
+fs.mkdirSync(beforeOutputDir, { recursive: true });
+fs.mkdirSync(afterOutputDir, { recursive: true });
 
 fs.readdirSync(beforeDir, { withFileTypes: true }).forEach(ent => {
   // if this item is a directory, look for .json files under it
@@ -48,7 +56,7 @@ fs.readdirSync(beforeDir, { withFileTypes: true }).forEach(ent => {
 });
 
 console.log(`\n\n Total Files: ${fileCount}\n  Diff Files: ${diffCount}`);
-console.log('Files with diffs after irrelevant data removal can be found at output/compare-output');
+console.log(`Files with diffs after irrelevant data removal can be found at ${compareOutputDir}`);
 
 function wipeIrrelevantData(results: any) {
   if (Array.isArray(results)) {
@@ -111,11 +119,11 @@ function compareResultsFiles(beforeFile: string, afterFile: string) {
     return true;
   } else {
     fs.writeFileSync(
-      path.join('output', 'compare-output', 'before', path.basename(beforeFile)),
+      path.join(beforeOutputDir, path.basename(beforeFile)),
       JSON.stringify(before, null, 2)
     );
     fs.writeFileSync(
-      path.join('output', 'compare-output', 'after', path.basename(afterFile)),
+      path.join(afterOutputDir, path.basename(afterFile)),
       JSON.stringify(after, null, 2)
     );
     return false;
