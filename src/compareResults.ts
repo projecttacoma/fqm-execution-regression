@@ -28,8 +28,14 @@ const timestampSuffix = [...new Set([beforeTimestamp, afterTimestamp])].join('-'
 const compareOutputDir = path.join('output', `compare-output-${timestampSuffix}`);
 const beforeName = path.basename(beforeDir).replace(/-\d+$/, '');
 const afterName = path.basename(afterDir).replace(/-\d+$/, '');
-const beforeOutputDir = path.join(compareOutputDir, beforeName === afterName ? `${beforeName}-${beforeTimestamp}` : beforeName);
-const afterOutputDir = path.join(compareOutputDir, beforeName === afterName ? `${afterName}-${afterTimestamp}` : afterName);
+const beforeOutputDir = path.join(
+  compareOutputDir,
+  beforeName === afterName ? `${beforeName}-${beforeTimestamp}` : beforeName
+);
+const afterOutputDir = path.join(
+  compareOutputDir,
+  beforeName === afterName ? `${afterName}-${afterTimestamp}` : afterName
+);
 fs.mkdirSync(beforeOutputDir, { recursive: true });
 fs.mkdirSync(afterOutputDir, { recursive: true });
 
@@ -118,14 +124,8 @@ function compareResultsFiles(beforeFile: string, afterFile: string) {
   if (beforeString == afterString) {
     return true;
   } else {
-    fs.writeFileSync(
-      path.join(beforeOutputDir, path.basename(beforeFile)),
-      JSON.stringify(before, null, 2)
-    );
-    fs.writeFileSync(
-      path.join(afterOutputDir, path.basename(afterFile)),
-      JSON.stringify(after, null, 2)
-    );
+    fs.writeFileSync(path.join(beforeOutputDir, path.basename(beforeFile)), JSON.stringify(before, null, 2));
+    fs.writeFileSync(path.join(afterOutputDir, path.basename(afterFile)), JSON.stringify(after, null, 2));
     return false;
   }
 }

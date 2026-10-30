@@ -1,4 +1,5 @@
 # fqm-execution-regression
+
 Scripts for running regression tests on fqm-execution.
 
 ## Setting up
@@ -39,12 +40,20 @@ Note that the only naming convention is that the folder containing the tests mus
 
 `./run-regression.sh`
 
+## Code style
+
+- `npm run lint` checks JavaScript and TypeScript with [Oxlint](https://oxc.rs/docs/guide/usage/linter/config).
+- `npm run lint:fix` applies available Oxlint fixes.
+- `npm run format` formats the project with Prettier.
+- `npm run format:check` checks formatting without changing files.
+
+Generated files and input/output data are excluded from these checks.
+
 # License
 
 Copyright 2026 The MITRE Corporation
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0).
-
 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
