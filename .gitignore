@@ -36,6 +36,7 @@ bower_components
 
 # Compiled binary addons (https://nodejs.org/api/addons.html)
 build/Release
+build
 
 # Dependency directories
 node_modules/
@@ -147,3 +148,9 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+
+# Compare output
+output/
+
+# Input measures
+input/
