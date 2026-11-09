@@ -79,7 +79,7 @@ node ./build/regression.js  "$BASE_BRANCH-$TIMESTAMP" $VERBOSE $MEASURE_PATH
 FAILURES=()
 BASE_BRANCH_BASE_PATH="output/$BASE_BRANCH-$TIMESTAMP"
 CURRENT_BRANCH_BASE_PATH="output/$CURRENT_BRANCH-$TIMESTAMP"
-for fname in $CURRENT_BRANCH_BASE_PATH/**/*.json; do
+for fname in $CURRENT_BRANCH_BASE_PATH/*/*/*.json; do
   # Gets the name of the test file itself ignoring the base path
   END_PATH=${fname#*/*/}
   P1="$CURRENT_BRANCH_BASE_PATH/$END_PATH"

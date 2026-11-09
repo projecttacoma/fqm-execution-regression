@@ -48,7 +48,7 @@ fs.readdirSync(beforeDir, { withFileTypes: true }).forEach(ent => {
           fileCount++;
           const beforeFile = path.join(beforeDir, ent.name, subEnt.name);
           const afterFile = path.join(afterDir, ent.name, subEnt.name);
-          const compResult = compareResultsFiles(beforeFile, afterFile);
+          const compResult = compareResultsFiles(beforeFile, afterFile, ent.name);
           if (!compResult) {
             console.warn(`${FG_RED}DIFF${RESET}: ${beforeFile}   AND   ${afterFile}`);
             diffCount++;
@@ -56,6 +56,21 @@ fs.readdirSync(beforeDir, { withFileTypes: true }).forEach(ent => {
         } else {
           console.warn(`${path.join(ent.name, subEnt.name)} was not found in ${afterDir}`);
         }
+      } else if (subEnt.isDirectory()) {
+        fs.readdirSync(path.join(beforeDir, ent.name, subEnt.name), { withFileTypes: true }).forEach(subSubEnt => {
+          if (fs.existsSync(path.join(afterDir, ent.name, subEnt.name, subSubEnt.name))) {
+            fileCount++;
+            const beforeFile = path.join(beforeDir, ent.name, subEnt.name, subSubEnt.name);
+            const afterFile = path.join(afterDir, ent.name, subEnt.name, subSubEnt.name);
+            const compResult = compareResultsFiles(beforeFile, afterFile, ent.name, subEnt.name);
+            if (!compResult) {
+              console.warn(`${FG_RED}DIFF${RESET}: ${beforeFile}   AND   ${afterFile}`);
+              diffCount++;
+            }
+          } else {
+            console.warn(`${path.join(ent.name, subEnt.name, subSubEnt.name)} was not found in ${afterDir}`);
+          }
+        });
       }
     });
   }
@@ -106,7 +121,7 @@ function removePointType(obj: any) {
   }
 }
 
-function compareResultsFiles(beforeFile: string, afterFile: string) {
+function compareResultsFiles(beforeFile: string, afterFile: string, ...parentDirs: string[]) {
   const before = JSON.parse(fs.readFileSync(beforeFile, 'utf8'));
   const after = JSON.parse(fs.readFileSync(afterFile, 'utf8'));
 
@@ -124,8 +139,18 @@ function compareResultsFiles(beforeFile: string, afterFile: string) {
   if (beforeString == afterString) {
     return true;
   } else {
-    fs.writeFileSync(path.join(beforeOutputDir, path.basename(beforeFile)), JSON.stringify(before, null, 2));
-    fs.writeFileSync(path.join(afterOutputDir, path.basename(afterFile)), JSON.stringify(after, null, 2));
+    if (!fs.existsSync(path.join(beforeOutputDir, ...parentDirs))) {
+      fs.mkdirSync(path.join(beforeOutputDir, ...parentDirs), { recursive: true });
+      fs.mkdirSync(path.join(afterOutputDir, ...parentDirs), { recursive: true });
+    }
+    fs.writeFileSync(
+      path.join(beforeOutputDir, ...parentDirs, path.basename(beforeFile)),
+      JSON.stringify(before, null, 2)
+    );
+    fs.writeFileSync(
+      path.join(afterOutputDir, ...parentDirs, path.basename(afterFile)),
+      JSON.stringify(after, null, 2)
+    );
     return false;
   }
 }
