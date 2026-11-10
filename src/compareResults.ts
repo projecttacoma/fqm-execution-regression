@@ -92,7 +92,7 @@ function wipeIrrelevantData(results: any) {
           // TODO: wipe out any occurrences in the detailedResult.episodeResults.stratifierResults.rawResult and detailedResult structure that has a key of `pointType`
         }
 
-        // TODO: wipe out any occurences in the patientResult.supplementalData structure
+        // TODO: wipe out any occurrences in the patientResult.supplementalData structure
         removePointType(patientResult);
       }
       // uniqueify evaluatedResources
