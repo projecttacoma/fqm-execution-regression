@@ -4,3 +4,4 @@ input/
 output/
 coverage/
 package-lock.json
+package.json

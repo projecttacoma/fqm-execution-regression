@@ -44,8 +44,8 @@ Note that the only naming convention is that the folder containing the tests mus
 
 - `npm run lint` checks JavaScript and TypeScript with [Oxlint](https://oxc.rs/docs/guide/usage/linter/config).
 - `npm run lint:fix` applies available Oxlint fixes.
-- `npm run format` formats the project with Prettier.
-- `npm run format:check` checks formatting without changing files.
+- `npm run prettier:fix` formats the project with Prettier.
+- `npm run prettier` checks formatting without changing files.
 
 Generated files and input/output data are excluded from these checks.
 

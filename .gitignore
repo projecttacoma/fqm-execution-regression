@@ -154,3 +154,5 @@ output/
 
 # Input measures
 input/
+
+.DS_Store
