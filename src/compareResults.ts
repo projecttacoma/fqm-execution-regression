@@ -19,12 +19,15 @@ console.log(`Comparing ${beforeDir} and ${afterDir}`);
 let fileCount = 0;
 let diffCount = 0;
 
+// find the timestamps in the before and after folder names
 const beforeTimestamp = path.basename(beforeDir).match(/-(\d+)$/)?.[1];
 const afterTimestamp = path.basename(afterDir).match(/-(\d+)$/)?.[1];
 if (!beforeTimestamp || !afterTimestamp) {
   throw new Error('Input directory names must end with a timestamp');
 }
 const timestampSuffix = [...new Set([beforeTimestamp, afterTimestamp])].join('-');
+
+// create the comparison output folder structure
 const compareOutputDir = path.join('output', `compare-output-${timestampSuffix}`);
 const beforeName = path.basename(beforeDir).replace(/-\d+$/, '');
 const afterName = path.basename(afterDir).replace(/-\d+$/, '');
@@ -83,6 +86,8 @@ function wipeIrrelevantData(results: any) {
   if (Array.isArray(results)) {
     if (results[0]) {
       const patientResult = results[0] as ExecutionResult<DetailedPopulationGroupResult>;
+      // remove parts of the detailed results that may add extra noise in comparison. this allows the comparison to
+      // focus on the actual population criteria results
       if (patientResult.detailedResults) {
         for (const detailedResult of patientResult.detailedResults) {
           //wipe out clause results and html
@@ -107,6 +112,14 @@ function wipeIrrelevantData(results: any) {
   }
 }
 
+/**
+ * Removes the `pointType` field from any object that appears to be an interval. This field was added
+ * in https://github.com/cqframework/cql-execution/pull/373 and is just metadata about the Interval type and not a
+ * relevant calculation change..
+ *
+ * @param obj Raw results from cql-execution
+ * @returns none
+ */
 function removePointType(obj: any) {
   if (obj === null || typeof obj !== 'object') return;
 
@@ -126,11 +139,11 @@ function compareResultsFiles(beforeFile: string, afterFile: string, ...parentDir
   const after = JSON.parse(fs.readFileSync(afterFile, 'utf8'));
 
   if (!wipeIrrelevantData(before)) {
-    //console.warn(`Failed to wipe irrelevant data from: ${beforeFile}`);
+    console.warn(`Failed to wipe irrelevant data from: ${beforeFile}`);
   }
 
   if (!wipeIrrelevantData(after)) {
-    //console.warn(`Failed to wipe irrelevant data from: ${afterFile}`);
+    console.warn(`Failed to wipe irrelevant data from: ${afterFile}`);
   }
 
   const beforeString = JSON.stringify(before);
